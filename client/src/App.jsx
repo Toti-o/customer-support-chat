@@ -4,7 +4,7 @@ import ChatRoom from './components/ChatRoom';
 import LoginForm from './components/LoginForm';
 import './App.css';
 
-const socket = io('http://localhost:5000');
+const socket = io(import.meta.env.VITE_SERVER_URL || 'http://localhost:5000');
 
 function App() {
   const [user, setUser] = useState(null);
