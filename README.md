@@ -1,77 +1,135 @@
-# Real-Time Chat Application with Socket.io
+# Customer Support Chat Application
 
-This assignment focuses on building a real-time chat application using Socket.io, implementing bidirectional communication between clients and server.
+A real-time customer support chat application built with React, Node.js, and Socket.io for the PLP Week 5 Assignment.
 
-## Assignment Overview
+## Features
 
-You will build a chat application with the following features:
-1. Real-time messaging using Socket.io
-2. User authentication and presence
-3. Multiple chat rooms or private messaging
-4. Real-time notifications
-5. Advanced features like typing indicators and read receipts
+###  Core Features
+- Real-time messaging with Socket.io
+- Online/offline status indicators
+- Typing indicators
+- User authentication (username-based)
+- Message timestamps and read receipts
+
+###  Advanced Features
+- File sharing (images, PDFs, documents)
+- Unread message notifications
+- Sound alerts for new messages
+- Browser notifications
+- Multiple user roles (Customer/Support Agent)
+- Responsive design for mobile/desktop
+
+###  Additional Features
+- Message history persistence
+- File type detection and preview
+- User presence indicators
+- Reconnection handling
+- Message delivery status
+- System messages for user join/leave
+
+##  Tech Stack
+
+- **Frontend:** React, Vite, Socket.io-client
+- **Backend:** Node.js, Express, Socket.io
+- **File Upload:** Multer
+- **Styling:** Custom CSS with orange theme
+
+##  Installation & Setup
+
+### Prerequisites
+- Node.js (v18 or higher recommended)
+
+### Running Locally
+
+1. **Clone the repository**
+   ```bash
+   git clone <your-repository-url>
+   cd customer-support-chat
+   ```
+
+2. **Start the Server**
+   ```bash
+   cd server
+   npm install
+   npm run dev
+   ```
+   Server runs on http://localhost:5000
+
+3. **Start the Client**
+   ```bash
+   cd client
+   npm install
+   npm run dev
+   ```
+   Client runs on http://localhost:3000
+
+4. **Open your browser** and navigate to http://localhost:3000
+
+## 🎮 How to Use
+
+1. **Join the chat** by entering your username, email, and selecting your role (Customer or Support Agent)
+2. **Send messages** in real-time with other users
+3. **Upload files** by clicking the paperclip icon (supports images, PDFs, documents)
+4. **See typing indicators** when other users are composing messages
+5. **View online users** in the sidebar
+6. **Receive notifications** for new messages with sound and browser alerts
+
+## 📱 Features Demo
+
+### Real-time Messaging
+- Instant message delivery between all connected users
+- Message read receipts and delivery status
+- Timestamp on all messages
+
+### File Sharing
+- Drag and drop or click to upload files
+- Image preview for uploaded images
+- Document download links for PDFs and other files
+- 5MB file size limit
+
+### User Management
+- Real-time online/offline status
+- User role differentiation (Customers vs Support Agents)
+- Join/leave notifications
+
+## Deployment
+
+### Option 1: Local Deployment
+Follow the installation steps above to run locally.
+
+### Option 2: Cloud Deployment (Recommended)
+- **Backend:** Deploy to Railway, Render, or Heroku
+- **Frontend:** Deploy to Vercel, Netlify, or GitHub Pages
 
 ## Project Structure
 
 ```
-socketio-chat/
-├── client/                 # React front-end
-│   ├── public/             # Static files
-│   ├── src/                # React source code
-│   │   ├── components/     # UI components
-│   │   ├── context/        # React context providers
-│   │   ├── hooks/          # Custom React hooks
-│   │   ├── pages/          # Page components
-│   │   ├── socket/         # Socket.io client setup
-│   │   └── App.jsx         # Main application component
-│   └── package.json        # Client dependencies
-├── server/                 # Node.js back-end
-│   ├── config/             # Configuration files
-│   ├── controllers/        # Socket event handlers
-│   ├── models/             # Data models
-│   ├── socket/             # Socket.io server setup
-│   ├── utils/              # Utility functions
-│   ├── server.js           # Main server file
-│   └── package.json        # Server dependencies
-└── README.md               # Project documentation
+customer-support-chat/
+├── server/
+│   ├── index.js          # Socket.io server
+│   ├── package.json      # Server dependencies
+│   └── uploads/          # File upload directory
+├── client/
+│   ├── src/
+│   │   ├── components/   # React components
+│   │   ├── hooks/        # Custom React hooks
+│   │   └── App.jsx       # Main App component
+│   └── package.json      # Client dependencies
+└── README.md
 ```
 
-## Getting Started
 
-1. Accept the GitHub Classroom assignment invitation
-2. Clone your personal repository that was created by GitHub Classroom
-3. Follow the setup instructions in the `Week5-Assignment.md` file
-4. Complete the tasks outlined in the assignment
+##  Environment Variables
 
-## Files Included
+For production deployment, set these environment variables:
 
-- `Week5-Assignment.md`: Detailed assignment instructions
-- Starter code for both client and server:
-  - Basic project structure
-  - Socket.io configuration templates
-  - Sample components for the chat interface
+**Server:**
+- `PORT` - Server port (default: 5000)
+- `CLIENT_URL` - Frontend URL for CORS
 
-## Requirements
+**Client:**
+- `VITE_SERVER_URL` - Backend server URL
 
-- Node.js (v18 or higher)
-- npm or yarn
-- Modern web browser
-- Basic understanding of React and Express
 
-## Submission
+*Built for PLP Week 5 Assignment - Real-Time Communication with Socket.io*
 
-Your work will be automatically submitted when you push to your GitHub Classroom repository. Make sure to:
-
-1. Complete both the client and server portions of the application
-2. Implement the core chat functionality
-3. Add at least 3 advanced features
-4. Document your setup process and features in the README.md
-5. Include screenshots or GIFs of your working application
-6. Optional: Deploy your application and add the URLs to your README.md
-
-## Resources
-
-- [Socket.io Documentation](https://socket.io/docs/v4/)
-- [React Documentation](https://react.dev/)
-- [Express.js Documentation](https://expressjs.com/)
-- [Building a Chat Application with Socket.io](https://socket.io/get-started/chat) 
