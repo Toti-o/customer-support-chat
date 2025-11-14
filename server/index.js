@@ -19,8 +19,7 @@ const io = new Server(server, {
   cors: {
     origin: [
       "http://localhost:3000", 
-      "https://customersupportchat.netlify.app",
-      "https://your-render-app.onrender.com" // Add your Render URL here
+      "https://customersupportchat.netlify.app"
     ],
     methods: ["GET", "POST"],
     credentials: true
@@ -31,8 +30,7 @@ const io = new Server(server, {
 app.use(cors({
   origin: [
     "http://localhost:3000",
-    "https://customersupportchat.netlify.app",
-    "https://your-render-app.onrender.com"
+    "https://customersupportchat.netlify.app"
   ],
   credentials: true
 }));
@@ -75,7 +73,7 @@ const upload = multer({
   }
 });
 
-// In-memory storage (in production, use a database)
+// In-memory storage
 const users = new Map();
 const messages = [];
 const supportAgents = new Map();
@@ -119,11 +117,10 @@ app.use((error, req, res, next) => {
   res.status(400).json({ error: error.message });
 });
 
-// Socket.IO connection handling
+// Socket.IO connection handling (same as before)
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
-  // User joins the chat
   socket.on('user_join', (userData) => {
     const user = {
       id: socket.id,
@@ -135,14 +132,9 @@ io.on('connection', (socket) => {
     };
     
     users.set(socket.id, user);
-    
-    // Notify everyone about online users
     io.emit('users_online', Array.from(users.values()).filter(u => u.isOnline));
-    
-    // Send chat history to the new user
     socket.emit('chat_history', messages);
     
-    // Notify that a user has joined
     if (user.type === 'customer') {
       io.emit('user_joined', {
         username: user.username,
@@ -154,7 +146,6 @@ io.on('connection', (socket) => {
     console.log(`User ${user.username} joined as ${user.type}`);
   });
 
-  // Handle typing indicators
   socket.on('typing_start', (data) => {
     socket.broadcast.emit('user_typing', {
       username: data.username,
@@ -169,7 +160,6 @@ io.on('connection', (socket) => {
     });
   });
 
-  // Handle new messages
   socket.on('send_message', (data) => {
     const user = users.get(socket.id);
     if (!user) return;
@@ -186,10 +176,8 @@ io.on('connection', (socket) => {
     
     messages.push(message);
     io.emit('new_message', message);
-    console.log(`Message from ${user.username}: ${data.message}`);
   });
 
-  // Handle file messages
   socket.on('send_file', (data) => {
     const user = users.get(socket.id);
     if (!user) return;
@@ -208,10 +196,8 @@ io.on('connection', (socket) => {
     
     messages.push(message);
     io.emit('new_message', message);
-    console.log(`File sent from ${user.username}: ${data.fileName}`);
   });
 
-  // Mark message as read
   socket.on('mark_read', (messageId) => {
     const message = messages.find(m => m.id === messageId);
     if (message && !message.readBy.includes(socket.id)) {
@@ -220,7 +206,6 @@ io.on('connection', (socket) => {
     }
   });
 
-  // Handle disconnection
   socket.on('disconnect', () => {
     const user = users.get(socket.id);
     if (user) {
@@ -234,7 +219,6 @@ io.on('connection', (socket) => {
       });
       
       io.emit('users_online', Array.from(users.values()).filter(u => u.isOnline));
-      
       console.log(`User ${user.username} disconnected`);
     }
     
