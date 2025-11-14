@@ -6,34 +6,50 @@ import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { v4 as uuidv4 } from 'uuid';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 const server = http.createServer(app);
+
+// ✅ Fixed CORS configuration
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000", "https://customersupportchat.netlify.app",
-    methods: ["GET", "POST"]
+    origin: [
+      "http://localhost:3000", 
+      "https://customersupportchat.netlify.app",
+      "https://your-render-app.onrender.com" // Add your Render URL here
+    ],
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:3000",
+    "https://customersupportchat.netlify.app",
+    "https://your-render-app.onrender.com"
+  ],
+  credentials: true
+}));
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Create uploads directory if it doesn't exist
-import fs from 'fs';
-if (!fs.existsSync('uploads')) {
-  fs.mkdirSync('uploads');
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
 }
+
+app.use('/uploads', express.static(uploadsDir));
 
 // File upload configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
     const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`;
@@ -64,6 +80,23 @@ const users = new Map();
 const messages = [];
 const supportAgents = new Map();
 
+// Routes
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Customer Support Chat API',
+    status: 'running',
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'OK', 
+    usersOnline: Array.from(users.values()).filter(u => u.isOnline).length,
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.post('/upload', upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
@@ -86,6 +119,7 @@ app.use((error, req, res, next) => {
   res.status(400).json({ error: error.message });
 });
 
+// Socket.IO connection handling
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
@@ -209,7 +243,7 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
-  console.log(`Uploads directory: ${path.join(__dirname, 'uploads')}`);
+  console.log(`Uploads directory: ${uploadsDir}`);
 });
